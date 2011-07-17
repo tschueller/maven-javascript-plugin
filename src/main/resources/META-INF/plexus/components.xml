@@ -1,0 +1,37 @@
+<!DOCTYPE component-set>
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>javascript</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <phases>
+          <compile>de.ailis.maven.plugins:maven-javascript-plugin:compile</compile>
+          <process-resources>de.ailis.maven.plugins:maven-javascript-plugin:resources</process-resources>
+          <package>org.apache.maven.plugins:maven-jar-plugin:jar</package>
+          <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+          <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+        </phases>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>javascript</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <extension>jar</extension>
+        <type>javascript</type>
+        <packaging>javascript</packaging>
+        <language>javascript</language>
+        <addedToClasspath>true</addedToClasspath>        
+      </configuration>
+    </component>
+    <component>
+      <role>org.codehaus.plexus.compiler.Compiler</role>
+      <role-hint>jscompiler</role-hint>
+      <implementation>de.ailis.maven.plugin.javascript.JsCompiler</implementation>
+      <configuration /> 
+    </component>
+  </components>
+</component-set>

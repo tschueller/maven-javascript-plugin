@@ -1,0 +1,2 @@
+* warning suppressions aus source bundle rausnehmen und stattdessen on-the-fly
+  zu den externs hinzufügen.
