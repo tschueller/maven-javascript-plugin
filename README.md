@@ -213,6 +213,27 @@ of file (single files, bundles, compiled form, source form) is used. Up to now
 no such software exists.
 
 
+Some words about the Closure Compiler
+-------------------------------------
+
+This plugin uses Google's Closure Compiler to compile the projects. The
+Closure Compiler supports dozens of configuration settings but up to now the
+JavaScript Maven plugin uses a fixed configuration which can't be changed. This
+may change in the future but there are some settings which will never be
+configurable:
+
+* Renaming is only done for function parameters and variables. All global stuff
+  (Even when annotated as private) is never renamed. JavaScript has no concept
+  for private symbols so renaming them can trigger strange problems when 
+  switching from uncompiled scripts to compiled scripts. So the base rule of
+  the plugin is: The real API signature of all files must be retained.
+* Only optimizations which doesn't affect the API signature are performed.
+* All checks are enabled and set to ERROR level. In the future I might add
+  some plugin configuration settings to lower the level of some checks to
+  WARNING but up to now the plugin expects code which is 100% type-safe and
+  error free.
+  
+
 TODOs
 -----
 
