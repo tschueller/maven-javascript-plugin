@@ -7,6 +7,9 @@
   <version>1.0.0-SNAPSHOT</version>
   
   <name>Maven JavaScript Plugin</name>
+  <description>
+    JavaScript support for Maven.
+  </description>
   <packaging>maven-plugin</packaging>
   
   <scm>
@@ -36,6 +39,19 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+  <distributionManagement>
+    <repository>
+      <id>ailis-releases</id>
+      <name>Ailis Maven Releases</name>
+      <url>https://www.ailis.de/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>ailis-snapshots</id>  
+      <name>Ailis Maven Snapshots</name>
+      <url>https://www.ailis.de/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
   
   <properties>
     <mavenFilteringVersion>1.0</mavenFilteringVersion>
