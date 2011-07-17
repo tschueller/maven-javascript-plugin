@@ -212,4 +212,19 @@ with the annotations in the javascript files and also can control what type
 of file (single files, bundles, compiled form, source form) is used. Up to now
 no such software exists.
 
+
+TODOs
+-----
+
+* Add demo support. Current idea: Place some demo HTML files into */src/demo*.
+  Plugin copies them into */target/demo* and parses and expands the script
+  inclusions. All used scripts are also copied to the */target/demo* directory
+  so you can simply call the HTML files in your browser.
+* Add junit support. Idea: Plugin provides a JavaScript wrapper for JUnit
+  (Using rhino) so Unit-Tests in */src/test/javascript* can be executed.
+* Add jsdoc support. Idea: Use the new rhino-based JSDoc implementation to
+  create API documentation.
+* Implement runtime dependency manager for PHP and Java.
+* Write m2e plugin so all this magic nicely integrates into Eclipse. 
+
 [1]: https://www.ailis.de/nexus/content/repositories/ "Ailis Maven Repository"
