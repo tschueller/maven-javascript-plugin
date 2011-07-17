@@ -5,7 +5,7 @@ maven-javascript-plugin
 Description
 -----------
 
-This plugin (Maven 2 or 3) provides support to work with JavaScript project.
+This plugin (Maven 2 or 3) provides support to work with JavaScript projects.
 It compiles scripts with Google's Closure Compiler, packages them into a JAR
 file and also has dependency support so a JavaScript project can depend on
 other JavaScript projects.
