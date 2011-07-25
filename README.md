@@ -186,7 +186,6 @@ added. This can be used at runtime to check which bundle must be loaded to
 fulfill a requirement of an other script. The compiled bundle could look like
 this for example:
 
-    (All scripts in compiled form here)
     /**
      * @provide foobar.js
      * @provide foobar/foo.js
@@ -194,6 +193,7 @@ this for example:
      * @require jquery.js
      * @use prototype.js
      */  
+    (All scripts in compiled form here)
      
 As you can see the bundle still contains *@require* and *@use* annotations
 which were not resolved to local scripts. So if the file *foobar/bar.js*
@@ -246,6 +246,5 @@ TODOs
 * Add jsdoc support. Idea: Use the new rhino-based JSDoc implementation to
   create API documentation.
 * Implement runtime dependency manager for PHP and Java.
-* Write m2e plugin so all this magic nicely integrates into Eclipse. 
 
 [1]: https://www.ailis.de/nexus/content/repositories/ "Ailis Maven Repository"
