@@ -64,7 +64,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @phase process-resources
  * @threadSafe
  */
-public class JsResourcesMojo extends AbstractMojo implements Contextualizable
+public class ResourcesMojo extends AbstractMojo implements Contextualizable
 {
     /**
      * The character encoding scheme to be applied when filtering resources.
@@ -103,7 +103,7 @@ public class JsResourcesMojo extends AbstractMojo implements Contextualizable
     /**
      * The list of additional filter properties files to be used along with
      * System and project properties, which would be used for the filtering. <br/>
-     * See also: {@link JsResourcesMojo#filters}.
+     * See also: {@link ResourcesMojo#filters}.
      *
      * @parameter default-value="${project.build.filters}"
      * @readonly
@@ -131,8 +131,8 @@ public class JsResourcesMojo extends AbstractMojo implements Contextualizable
     /**
      * If false, don't use the filters specified in the build/filters section of
      * the POM when processing resources in this mojo execution. <br/>
-     * See also: {@link JsResourcesMojo#buildFilters} and
-     * {@link JsResourcesMojo#filters}
+     * See also: {@link ResourcesMojo#buildFilters} and
+     * {@link ResourcesMojo#filters}
      *
      * @parameter default-value="true"
      */

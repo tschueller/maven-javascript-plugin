@@ -211,7 +211,7 @@ public class DependencyManager
             throw new CircularDependencyException(
                 "Circular dependency detected: "
                     + StringUtils.join(this.stack.iterator(), " > ") + " > "
-                    + filename);
+                    + filename, this.sourceDirectory + filename);
         this.stack.push(filename);
 
         // Process the script
