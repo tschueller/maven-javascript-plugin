@@ -622,7 +622,7 @@ public class CompilerMojo extends AbstractMojo
         options.removeUnusedPrototypePropertiesInExterns = false;
         options.removeUnusedVars = false;
         options.renamePrefix = null;
-        options.reportMissingOverride = CheckLevel.ERROR;
+        options.reportMissingOverride = CheckLevel.OFF; // Generates error messages outside of the compiled code for some reason.
         options.reportPath = null;
         options.reportUnknownTypes = CheckLevel.ERROR;
         options.reserveRawExports = false;
