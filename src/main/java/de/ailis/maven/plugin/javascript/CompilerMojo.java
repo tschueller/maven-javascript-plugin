@@ -1,15 +1,15 @@
 /*
  * Copyright (C) 2011 Klaus Reimer <k@ailis.de>
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with this
  * work for additional information regarding copyright ownership. The ASF
  * licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -68,7 +68,7 @@ import com.google.javascript.jscomp.WarningLevel;
  * bundles and compiles them into specific folders in the output directory.
  * Compile dependencies are used as so-called externals for the Closure Compiler
  * which is used to compile the sources.
- * 
+ *
  * @author Klaus Reimer (k@ailis.de)
  * @goal compile
  * @phase compile
@@ -79,7 +79,7 @@ public class CompilerMojo extends AbstractMojo
 {
     /**
      * The character encoding scheme to be applied when filtering resources.
-     * 
+     *
      * @parameter default-value="${project.build.sourceEncoding}"
      */
     private String encoding;
@@ -87,14 +87,14 @@ public class CompilerMojo extends AbstractMojo
     /**
      * Indicates whether the build will continue even if there are compilation
      * errors; defaults to true.
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean failOnError;
 
     /**
      * The source directories containing the sources to be compiled.
-     * 
+     *
      * @parameter default-value="${project.build.sourceDirectory}"
      * @required
      * @readonly
@@ -103,14 +103,14 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * A list of inclusion filters for the compiler.
-     * 
+     *
      * @parameter
      */
     private String[] includes;
 
     /**
      * A list of exclusion filters for the compiler.
-     * 
+     *
      * @parameter
      */
     private String[] excludes;
@@ -121,14 +121,14 @@ public class CompilerMojo extends AbstractMojo
      * behavior. Please note that the plugin doesn't support real incremental
      * builds. A full build is performed everytime the IDE requests an
      * incremental build (if at least one file was changed).
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean incremental;
 
     /**
      * The output directory for the compiled scripts.
-     * 
+     *
      * @parameter default-value="${project.build.outputDirectory}"
      * @required
      * @readonly
@@ -137,7 +137,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * The output directory for the uncompressed script files.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}/script-sources"
      * @required
      * @readonly
@@ -146,8 +146,8 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * The output directory for the uncompressed script source bundles.
-     * 
-     * @parameter 
+     *
+     * @parameter
      *            expression="${project.build.outputDirectory}/script-source-bundles"
      * @required
      * @readonly
@@ -156,7 +156,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * The output directory for the script bundles.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}/script-bundles"
      * @required
      * @readonly
@@ -165,7 +165,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * The output directory for the single compiled script files.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}/scripts"
      * @required
      * @readonly
@@ -174,7 +174,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * The output filename of the bundle file.
-     * 
+     *
      * @parameter expression="${project.artifactId}.js"
      * @required
      */
@@ -182,7 +182,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Project classpath.
-     * 
+     *
      * @parameter default-value="${project.compileClasspathElements}"
      * @required
      * @readonly
@@ -191,7 +191,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * The build context.
-     * 
+     *
      * @component
      */
     private BuildContext buildContext;
@@ -207,16 +207,16 @@ public class CompilerMojo extends AbstractMojo
         if (!this.incremental && this.buildContext.isIncremental()) return;
 
         // Get the files to compile. Do nothing if no file was found.
-        String[] files = getFiles();
+        final String[] files = getFiles();
         if (files.length == 0) return;
 
         // Remove all messages
-        for (String file: files)
+        for (final String file: files)
             this.buildContext.removeMessages(new File(this.sourceDirectory, file));
-        
+
         // Create externs and source files.
-        List<JSSourceFile> externs = createExterns();
-        List<JSSourceFile> sources = createSourceFiles(files);
+        final List<JSSourceFile> externs = createExterns();
+        final List<JSSourceFile> sources = createSourceFiles(files);
 
         // Write the uncompiled script sources to the output directory.
         writeScriptSources(sources);
@@ -255,9 +255,9 @@ public class CompilerMojo extends AbstractMojo
         // Compile the javascript sources.
         getLog().info("Compiling " + sources.size() + " file(s) with "
             + externs.size() + " extern(s)");
-        Compiler compiler = createCompiler();
-        CompilerOptions options = createCompilerOptions();
-        Result result = compiler.compile(externs, sources, options);
+        final Compiler compiler = createCompiler();
+        final CompilerOptions options = createCompilerOptions();
+        final Result result = compiler.compile(externs, sources, options);
         if (result.success)
         {
             // Write the script bundle
@@ -278,7 +278,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Scans for files to compile and returns them as a list of filenames.
-     * 
+     *
      * @return The files to compile. Never null. May be empty if no files are to
      *         be compiled.
      */
@@ -288,18 +288,18 @@ public class CompilerMojo extends AbstractMojo
         // to be build.
         if (this.buildContext.isIncremental())
         {
-            Scanner scanner =
+            final Scanner scanner =
                 this.buildContext.newScanner(this.sourceDirectory);
             setupScanner(scanner);
             scanner.scan();
-            String[] files = scanner.getIncludedFiles();
+            final String[] files = scanner.getIncludedFiles();
             if (files.length == 0) return files;
         }
 
         // Perform the real scan (Ignoring incremental build because we
         // can't do it anyway. So when at least one included file was changed
         // then we do a full rebuild).
-        DirectoryScanner scanner = new DirectoryScanner();
+        final DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(this.sourceDirectory);
         setupScanner(scanner);
         scanner.scan();
@@ -308,11 +308,11 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Setup the specified scanner with the include and exclude filters.
-     * 
+     *
      * @param scanner
      *            The scanner to setup
      */
-    private void setupScanner(Scanner scanner)
+    private void setupScanner(final Scanner scanner)
     {
         scanner.addDefaultExcludes();
         scanner.setExcludes(this.excludes);
@@ -324,14 +324,14 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Creates JavaScript source files from the specified list of file names.
-     * 
+     *
      * @param filenames
      *            The list of file names.
      * @return The list of JavaScript source files.
      */
-    private List<JSSourceFile> createSourceFiles(String[] filenames)
+    private List<JSSourceFile> createSourceFiles(final String[] filenames)
     {
-        List<JSSourceFile> sourceFiles = new ArrayList<JSSourceFile>();
+        final List<JSSourceFile> sourceFiles = new ArrayList<JSSourceFile>();
         for (final String filename : filenames)
         {
             final File file = new File(this.sourceDirectory, filename);
@@ -348,7 +348,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Gets the default externs set.
-     * 
+     *
      * @return The default externs.
      * @throws MojoExecutionException
      *             When an exception occurs during processing of externs.
@@ -383,7 +383,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Searches for extern files.
-     * 
+     *
      * @return The extern files.
      * @throws MojoExecutionException
      *             If an exception occurs while searching for extern files.
@@ -454,18 +454,18 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Writes the script sources to the output directory.
-     * 
+     *
      * @param sourceFiles
      *            the source files to write.
      * @throws MojoExecutionException
      *             When source file could not be written to output directory.
      */
-    private void writeScriptSources(List<JSSourceFile> sourceFiles)
+    private void writeScriptSources(final List<JSSourceFile> sourceFiles)
         throws MojoExecutionException
     {
-        for (JSSourceFile sourceFile : sourceFiles)
+        for (final JSSourceFile sourceFile : sourceFiles)
         {
-            File output =
+            final File output =
                 new File(this.scriptSourcesDirectory,
                     sourceFile.getOriginalPath());
             output.getParentFile().mkdirs();
@@ -474,7 +474,7 @@ public class CompilerMojo extends AbstractMojo
                 FileUtils.fileWrite(output.getAbsolutePath(), this.encoding,
                     sourceFile.getCode());
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new MojoExecutionException(e.toString(), e);
             }
@@ -483,12 +483,12 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Creates the closure compiler.
-     * 
+     *
      * @return The closure compiler.
      */
     private Compiler createCompiler()
     {
-        Compiler compiler = new Compiler();
+        final Compiler compiler = new Compiler();
         Compiler.setLoggingLevel(Level.OFF);
         final MavenErrorManager errorManager = new MavenErrorManager(
             getLog(), this.buildContext);
@@ -498,7 +498,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Creates and returns the compiler options.
-     * 
+     *
      * @return The compiler options
      */
     private CompilerOptions createCompilerOptions()
@@ -545,6 +545,7 @@ public class CompilerMojo extends AbstractMojo
         options.coalesceVariableNames = false;
         options.collapseAnonymousFunctions = false;
         options.collapseProperties = false;
+        options.collapseObjectLiterals = false;
         options.collapseVariableDeclarations = true;
         options.computeFunctionSideEffects = true;
         options.convertToDottedProperties = true;
@@ -558,18 +559,11 @@ public class CompilerMojo extends AbstractMojo
         options.decomposeExpressions = false;
         options.devirtualizePrototypeMethods = false;
         options.disambiguateProperties = false;
-
         options.disableRuntimeTypeCheck();
 
         options.errorFormat = ErrorFormat.SINGLELINE;
         options.exportTestFunctions = false;
         options.extractPrototypeMemberDeclarations = false;
-        Set<String> extraAnnotationNames = new HashSet<String>();
-        extraAnnotationNames.add("require");
-        extraAnnotationNames.add("use");
-        extraAnnotationNames.add("provide");
-        options.setExtraAnnotationNames(extraAnnotationNames);
-
         options.enableExternExports(false);
 
         options.flowSensitiveInlineVariables = false;
@@ -600,6 +594,7 @@ public class CompilerMojo extends AbstractMojo
         options.labelRenaming = false;
         options.lineBreak = true;
         options.locale = "UTF-8";
+        options.lineLengthThreshold(500);
 
         options.markAsCompiled = false;
         options.markNoSideEffectCalls = false;
@@ -627,7 +622,7 @@ public class CompilerMojo extends AbstractMojo
         options.removeUnusedPrototypePropertiesInExterns = false;
         options.removeUnusedVars = false;
         options.renamePrefix = null;
-        options.reportMissingOverride = CheckLevel.OFF;
+        options.reportMissingOverride = CheckLevel.ERROR;
         options.reportPath = null;
         options.reportUnknownTypes = CheckLevel.ERROR;
         options.reserveRawExports = false;
@@ -651,6 +646,11 @@ public class CompilerMojo extends AbstractMojo
         options.setCodingConvention(new ClosureCodingConvention());
         options.setCollapsePropertiesOnExternTypes(false);
         options.setColorizeErrorOutput(true);
+        final Set<String> extraAnnotationNames = new HashSet<String>();
+        extraAnnotationNames.add("require");
+        extraAnnotationNames.add("use");
+        extraAnnotationNames.add("provide");
+        options.setExtraAnnotationNames(extraAnnotationNames);
         options.setLooseTypes(false);
         options.setManageClosureDependencies(false);
         options.setNameAnonymousFunctionsOnly(false);
@@ -710,7 +710,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Write the compilation results to the target file.
-     * 
+     *
      * @param source
      *            The source.
      * @param dependencyManager
@@ -768,7 +768,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Writes the result of a single file.
-     * 
+     *
      * @param jsSourceFile
      *            The source file
      * @param compiledSource
@@ -792,7 +792,7 @@ public class CompilerMojo extends AbstractMojo
         {
             final OutputStreamWriter out =
                 new OutputStreamWriter(new FileOutputStream(output), "UTF-8");
-            
+
             // Add dependency annotations
             if (dependencies.size() > 0)
             {
@@ -805,10 +805,10 @@ public class CompilerMojo extends AbstractMojo
                 }
                 out.append(" */\n");
             }
-            
+
             // Add the compiles source code
             out.append(compiledSource);
-            
+
             out.close();
         }
         catch (final IOException e)
@@ -819,7 +819,7 @@ public class CompilerMojo extends AbstractMojo
 
     /**
      * Write the uncompiled source file.
-     * 
+     *
      * @param sources
      *            The sources.ls -la
      * @param dependencyManager
@@ -866,7 +866,7 @@ public class CompilerMojo extends AbstractMojo
                 }
                 out.append(" */\n\n");
             }
-            
+
             for (final JSSourceFile source : sources)
             {
                 final String filename = source.getOriginalPath();
