@@ -13,14 +13,14 @@
   <packaging>maven-plugin</packaging>
   
   <scm>
-    <connection>scm:git:git://github.com/kayahr/${artifactId}.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/kayahr/${artifactId}.git</developerConnection>
-    <url>http://github.com/kayahr/${artifactId}</url>
+    <connection>scm:git:git://github.com/kayahr/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/kayahr/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/kayahr/${project.artifactId}</url>
   </scm>
   
   <issueManagement>
     <system>Github</system>
-    <url>https://github.com/kayahr/${artifactId}/issues</url>
+    <url>https://github.com/kayahr/${project.artifactId}/issues</url>
   </issueManagement>
           
   <build>
