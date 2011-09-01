@@ -1,12 +1,12 @@
 /*
  * Copyright (C) 2011 Klaus Reimer <k@ailis.de>
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -27,7 +27,7 @@ import com.google.javascript.jscomp.JSError;
 
 /**
  * Closure Compiler error manager linked to a Maven logger and build context.
- * 
+ *
  * @author Klaus Reimer (k@ailis.de)
  */
 public class MavenErrorManager extends BasicErrorManager
@@ -40,13 +40,13 @@ public class MavenErrorManager extends BasicErrorManager
 
     /**
      * Constructor
-     * 
+     *
      * @param log
      *            The Plexus logger.
      * @param buildContext
      *            The build context.
      */
-    public MavenErrorManager(final Log log, BuildContext buildContext)
+    public MavenErrorManager(final Log log, final BuildContext buildContext)
     {
         this.buildContext = buildContext;
         this.log = log;

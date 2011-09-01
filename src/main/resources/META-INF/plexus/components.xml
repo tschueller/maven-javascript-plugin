@@ -7,7 +7,10 @@
       <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
       <configuration>
         <phases>
-          <compile>de.ailis.maven.plugins:maven-javascript-plugin:compile</compile>
+          <compile>
+            de.ailis.maven.plugins:maven-javascript-plugin:compile,
+            de.ailis.maven.plugins:maven-javascript-plugin:demo
+          </compile>
           <process-resources>de.ailis.maven.plugins:maven-javascript-plugin:resources</process-resources>
           <package>org.apache.maven.plugins:maven-jar-plugin:jar</package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
