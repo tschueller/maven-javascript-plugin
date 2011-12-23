@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -36,8 +38,11 @@ import com.google.javascript.jscomp.SourceFile.Generator;
  */
 public class SuppressedCodeGenerator implements Generator
 {
+    /** The pattern to find a fileoverview annotation in the file. */
+    private final static Pattern FILEOVERVIEW_PATTERN = Pattern.compile("@fileoverview\\b");
+            
     /** The suppression string to add to all generated sources. */
-    private final static String SUPPRESSIONS = "@suppress {" +
+    private final static String SUPPRESSIONS = "@fileoverview\n@suppress {" +
         "accessControls|" +
         "checkRegExp|" +
         "checkTypes|" +
@@ -63,7 +68,7 @@ public class SuppressedCodeGenerator implements Generator
         "uselessCode|" +
         "visibility|" +
         "with" +
-        "}";
+        "}\n";
 
     /** The original source code. */
     private final String origCode;
@@ -106,6 +111,14 @@ public class SuppressedCodeGenerator implements Generator
     @Override
     public String getCode()
     {
-        return "/**\n@fileoverview\n" + SUPPRESSIONS + "*/ " + this.origCode;
+        Matcher matcher = FILEOVERVIEW_PATTERN.matcher(this.origCode);
+        if (matcher.find())
+        {
+            return matcher.replaceFirst(SUPPRESSIONS);
+        }
+        else
+        {
+            return "/**" + SUPPRESSIONS + "*/" + this.origCode;
+        }
     }
 }

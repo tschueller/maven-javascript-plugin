@@ -879,7 +879,7 @@ public class CompilerMojo extends AbstractMojo
                 out.append("\n");
                 out.append(source
                     .getCode()
-                    .replaceAll("(?m)^\\s*\\*\\s*@fileoverview\\s*$[\n\r]*", "")
+                    .replaceAll("(?m)^\\s*\\*\\s*@fileoverview\\b", "")
                     .replaceAll("(?m)^\\s*\\*\\s*@suppress\\s+\\{[a-zA-Z0-9\\|]+\\}\\s*$[\n\r]*", "")
                     .replaceAll(
                         "(?m)^\\s*\\*\\s*@(use|require)\\s+[a-zA-Z0-9\\/\\-\\.]+\\s*$[\n\r]*",
