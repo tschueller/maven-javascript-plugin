@@ -351,5 +351,9 @@ TODOs
 * Add jsdoc support. Idea: Use the new rhino-based JSDoc implementation to
   create API documentation.
 * Implement runtime dependency manager for PHP and Java.
+* Ignore warnings/errors in dependencies.
+* Place require/use/provide annotations below the first comment of the
+  output file so license information is always on top.
+* Use real dependencies instead of hardcoded externs.
 
 [1]: https://www.ailis.de/nexus/content/repositories/ "Ailis Maven Repository"

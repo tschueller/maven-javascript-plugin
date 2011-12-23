@@ -400,15 +400,23 @@ public class CompilerMojo extends AbstractMojo
             final File file = new File(entry);
             if (file.isDirectory())
             {
-                File externDir = new File(file, "script-externs");
-                if (!externDir.exists())
-                    externDir = new File(file, "script-source-bundles");
-                if (!externDir.exists()) continue;
-                for (final File externFile : externDir.listFiles())
+                try
                 {
-                    final JSSourceFile source =
-                        JSSourceFile.fromFile(externFile);
-                    externs.add(source);
+                    File externDir = new File(file, "script-externs");
+                    if (!externDir.exists())
+                        externDir = new File(file, "script-source-bundles");
+                    if (!externDir.exists()) continue;
+                    for (final File externFile : externDir.listFiles())
+                    {
+                        final JSSourceFile source =
+                            JSSourceFile.fromGenerator(file.getAbsolutePath(),
+                                new SuppressedCodeGenerator(externFile));
+                        externs.add(source);
+                    }
+                }
+                catch (final IOException e)
+                {
+                    throw new MojoExecutionException(e.toString(), e);
                 }
             }
             else
@@ -429,9 +437,9 @@ public class CompilerMojo extends AbstractMojo
                                 jarFile.getInputStream(jarEntry);
                             try
                             {
-                                externs.add(JSSourceFile.fromInputStream(
+                                externs.add(JSSourceFile.fromGenerator(
                                     file.getAbsolutePath() + ":" + entryName,
-                                    stream));
+                                    new SuppressedCodeGenerator(stream)));
                             }
                             finally
                             {
@@ -468,7 +476,7 @@ public class CompilerMojo extends AbstractMojo
             output.getParentFile().mkdirs();
             try
             {
-                FileUtils.fileWrite(output.getAbsolutePath(), this.encoding,
+                FileUtils.fileWrite(output.getAbsolutePath(), getEncoding(),
                     sourceFile.getCode());
             }
             catch (final IOException e)
@@ -571,7 +579,7 @@ public class CompilerMojo extends AbstractMojo
         options.generatePseudoNames = false;
         options.groupVariableDeclarations = true;
 
-        options.ideMode = false;
+        options.ideMode = true;
         options.ignoreCajaProperties = false;
         options.inferTypesInGlobalScope = true;
         options.inlineAnonymousFunctionExpressions = false;
@@ -727,7 +735,7 @@ public class CompilerMojo extends AbstractMojo
         {
             final OutputStreamWriter out =
                 new OutputStreamWriter(new FileOutputStream(output),
-                    this.encoding);
+                    getEncoding());
 
             // Add dependency annotations
             final Set<Dependency> dependencies =
@@ -836,10 +844,6 @@ public class CompilerMojo extends AbstractMojo
         {
             final OutputStreamWriter out =
                 new OutputStreamWriter(new FileOutputStream(output), "UTF-8");
-            // out.append("\n/**\n");
-            // out.append(" * @fileoverview\n");
-            // out.append(" * @suppress {accessControls|checkRegExp|checkTypes|checkVars|deprecated|fileoverviewTags|invalidCasts|missingProperties|nonStandardJsDocs|strictModuleDepCheck|undefinedVars|unknownDefines|uselessCode|visibility}\n");
-            // out.append(" */\n\n");
 
             // Add dependency annotations
             final Set<String> provides =
@@ -875,7 +879,8 @@ public class CompilerMojo extends AbstractMojo
                 out.append("\n");
                 out.append(source
                     .getCode()
-                    .replaceAll("(?m)^\\s*\\*\\s*@fileoverview", "")
+                    .replaceAll("(?m)^\\s*\\*\\s*@fileoverview\\s*$[\n\r]*", "")
+                    .replaceAll("(?m)^\\s*\\*\\s*@suppress\\s+\\{[a-zA-Z0-9\\|]+\\}\\s*$[\n\r]*", "")
                     .replaceAll(
                         "(?m)^\\s*\\*\\s*@(use|require)\\s+[a-zA-Z0-9\\/\\-\\.]+\\s*$[\n\r]*",
                         ""));
@@ -889,4 +894,16 @@ public class CompilerMojo extends AbstractMojo
             throw new MojoExecutionException(e.toString(), e);
         }
     }
+    
+    /**
+     * Returns the encoding used for writing output files.
+     *
+     * @return The used encoding. Never null.
+     */
+    private String getEncoding()
+    {
+        if (this.encoding != null) return this.encoding;
+        return "UTF-8";
+    }
 }
+

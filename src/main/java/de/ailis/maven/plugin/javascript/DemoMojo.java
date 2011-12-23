@@ -93,7 +93,7 @@ public class DemoMojo extends AbstractMojo
         final File cpFile =
             new File(this.demoOutputDirectory, "searchpath.php");
         final OutputStreamWriter writer =
-            new OutputStreamWriter(new FileOutputStream(cpFile), this.encoding);
+            new OutputStreamWriter(new FileOutputStream(cpFile), getEncoding());
         try
         {
             writer.append("<?php\n\n");
@@ -141,5 +141,16 @@ public class DemoMojo extends AbstractMojo
         {
             stream.close();
         }
+    }
+    
+    /**
+     * Returns the encoding used for writing output files.
+     *
+     * @return The used encoding. Never null.
+     */
+    private String getEncoding()
+    {
+        if (this.encoding != null) return this.encoding;
+        return "UTF-8";
     }
 }
