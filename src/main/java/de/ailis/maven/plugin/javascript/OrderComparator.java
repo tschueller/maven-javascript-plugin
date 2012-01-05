@@ -50,8 +50,10 @@ public class OrderComparator implements Comparator<JSSourceFile>
     @Override
     public int compare(final JSSourceFile o1, final JSSourceFile o2)
     {
-        final int i1 = this.order.indexOf(o1.getName());
-        final int i2 = this.order.indexOf(o2.getName());
+        final String name1 = o1.getName().replace("\\", "/");
+        final String name2 = o2.getName().replace("\\", "/");
+        final int i1 = this.order.indexOf(name1);
+        final int i2 = this.order.indexOf(name2);
         if (i1 == i2) return 0;
         if (i1 < 0) return 1;
         if (i2 < 0) return -1;

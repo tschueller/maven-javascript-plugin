@@ -101,8 +101,8 @@ public class DependencyManager
         {
             dependencies.add(new Dependency(matcher.group(1), false));
         }
-        this.scriptDependencies.put(
-            file.getName().replace(this.sourceDirectory, ""), dependencies);
+        this.scriptDependencies.put(file.getName().replace(
+            this.sourceDirectory, "").replace("\\", "/"), dependencies);
     }
 
     /**
@@ -134,7 +134,7 @@ public class DependencyManager
     {
         final List<Dependency> dependencies =
             this.scriptDependencies.get(file.getName().replace(
-                this.sourceDirectory, ""));
+                this.sourceDirectory, "").replace("\\", "/"));
         if (dependencies == null)
             throw new IllegalArgumentException("File " + file
                 + " is unknown to script dependency manager");
@@ -216,7 +216,7 @@ public class DependencyManager
 
         // Process the script
         processScript(filename);
-        this.order.add(this.sourceDirectory + filename);
+        this.order.add((this.sourceDirectory + filename).replace("\\", "/"));
 
         // Mark script as included
         this.included.add(filename);
