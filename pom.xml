@@ -4,7 +4,7 @@
   
   <groupId>de.ailis.maven.plugins</groupId>
   <artifactId>maven-javascript-plugin</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
   
   <name>Maven JavaScript Plugin</name>
   <description>
