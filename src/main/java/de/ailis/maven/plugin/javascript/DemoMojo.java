@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -129,13 +130,16 @@ public class DemoMojo extends AbstractMojo
      */
     private void writeResolverPhp() throws IOException
     {
+        File output = new File(this.demoOutputDirectory, "resolver.php");
+        if (output.exists()) return;
+        
         final InputStream stream =
             getClass().getResourceAsStream("/resolver.php");
         if (stream == null) throw new IOException("resolver.php not found");
         try
         {
             FileUtils.copyStreamToFile(new RawInputStreamFacade(stream),
-                new File(this.demoOutputDirectory, "resolver.php"));
+                output);
         }
         finally
         {

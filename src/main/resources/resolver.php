@@ -41,7 +41,8 @@ class Resolver
         "cab" => "vnd.ms-cab-compressed",
         "jar" => "application/java-archive",
         "xml" => "text/plain",
-        "dtd" => "text/plain"
+        "dtd" => "text/plain",
+        "css" => "text/css"
     );
 
     /** The inclusion stack */
