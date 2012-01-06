@@ -26,7 +26,7 @@ Add this configuration to your POM to automatically use this repo:
       <repository>
         <id>ailis-releases</id> 
         <name>Ailis Maven Releases</name> 
-        <url>https://www.ailis.de/nexus/content/repositories/releases</url> 
+        <url>http://nexus.ailis.de/content/repositories/releases</url> 
         <releases><enabled>true</enabled></releases>
         <snapshots><enabled>false</enabled></snapshots>
       </repository>
@@ -57,7 +57,7 @@ information:
           <plugin>
             <groupId>de.ailis.maven.plugins</groupId>
             <artifactId>maven-javascript-plugin</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.3</version>
             <extensions>true</extensions>
           </plugin>
         </plugins>
@@ -274,7 +274,7 @@ longer you can disable compile-on-save by configuring the plugin like this:
     <plugin>
       <groupId>de.ailis.maven.plugins</groupId>
       <artifactId>maven-javascript-plugin</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.3</version>
       <extensions>true</extensions>
       <configuration>
         <incremental>false</incremental>
@@ -356,4 +356,4 @@ TODOs
   output file so license information is always on top.
 * Use real dependencies instead of hardcoded externs.
 
-[1]: https://www.ailis.de/nexus/content/repositories/ "Ailis Maven Repository"
+[1]: http://nexus.ailis.de/content/repositories/ "Ailis Maven Repository"
