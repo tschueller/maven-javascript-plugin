@@ -90,8 +90,8 @@ class Resolver
         array_push($this->stack, $filename);
 
         // Process the script
-        $this->processScript($filename);
-        $src = basename($_SERVER["PHP_SELF"]) . "/script-sources/$filename";
+        $actualFilename = $this->processScript($filename);
+        $src = basename($_SERVER["PHP_SELF"]) . "/" . $actualFilename;
         echo "<script type=\"text/javascript\" src=\"$src\"></script>\n";
 
         // Mark script as included
@@ -137,10 +137,18 @@ class Resolver
      * Processes the specified script.
      *
      * @param string $filename The script to process
+     * @return string
+     *             The actual found filename.
      */
     public function processScript($filename)
     {
-        $data = $this->readResource("script-sources/$filename");
+        $actualFilename = "script-sources/$filename";
+        $data = $this->readResource($actualFilename);
+        if (is_null($data))
+        {
+            $actualFilename = "scripts/$filename";
+            $data = $this->readResource($actualFilename);
+        }
         if (is_null($data))
         {
             end($this->stack);
@@ -164,6 +172,7 @@ class Resolver
                 $this->useScript($matches[1][$i]);
             }
         }
+        return $actualFilename;
     }
 
     /**
