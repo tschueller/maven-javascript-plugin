@@ -43,21 +43,14 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.LimitInputStream;
-import com.google.javascript.jscomp.AnonymousFunctionNamingPolicy;
 import com.google.javascript.jscomp.CheckLevel;
-import com.google.javascript.jscomp.ClosureCodingConvention;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
-import com.google.javascript.jscomp.CompilerOptions.TracerMode;
-import com.google.javascript.jscomp.CompilerOptions.TweakProcessing;
+import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
 import com.google.javascript.jscomp.DiagnosticGroups;
-import com.google.javascript.jscomp.ErrorFormat;
 import com.google.javascript.jscomp.JSSourceFile;
-import com.google.javascript.jscomp.PropertyRenamingPolicy;
 import com.google.javascript.jscomp.Result;
-import com.google.javascript.jscomp.SourceMap;
-import com.google.javascript.jscomp.VariableRenamingPolicy;
 import com.google.javascript.jscomp.WarningLevel;
 
 /**
@@ -509,207 +502,131 @@ public class CompilerMojo extends AbstractMojo
     private CompilerOptions createCompilerOptions()
     {
         final CompilerOptions options = new CompilerOptions();
+        
+        // Use SIMPLE optimizations as a starting point for the options.
         CompilationLevel.SIMPLE_OPTIMIZATIONS
             .setOptionsForCompilationLevel(options);
+        
+        // Always print summary details
+        options.setSummaryDetailLevel(3);
+        
+        // We do shiny new JavaScript here 
+        options.setLanguageIn(LanguageMode.ECMASCRIPT5_STRICT);
+        options.setLanguageOut(LanguageMode.ECMASCRIPT5_STRICT);
+        
+        // Enable VERBOSE warning level.
         WarningLevel.VERBOSE.setOptionsForWarningLevel(options);
 
-        options.aggressiveVarCheck = CheckLevel.ERROR;
-        options.aliasableGlobals = null;
-        options.aliasableStrings = Collections.emptySet();
-        options.aliasAllStrings = false;
-        options.aliasExternals = false;
-        options.aliasKeywords = false;
-        options.aliasStringsBlacklist = "";
-        options.allowLegacyJsMessages = false;
-        options.ambiguateProperties = false;
-        options.anonymousFunctionNaming = AnonymousFunctionNamingPolicy.OFF;
-        options.appNameStr = "";
+        // Type inference should already be activated by setting VERBOSE
+        // warning level but because this is the most crucial feature we
+        // need here we enable it twice here.
+        options.setInferTypes(true);        
+        
+        // Another important feature: We want to achieve 100% type safety
+        // so Closure Compiler must report unknown types.
+        options.setReportUnknownTypes(CheckLevel.ERROR);
+        
+        // We have our own dependency system so we don't need to process
+        // this closure library stuff
+        options.setClosurePass(false);
 
-        options.brokenClosureRequiresLevel = CheckLevel.ERROR;
+        // Check for invalid control structures
+        options.setCheckControlStructures(true);
 
-        options.checkCaja = false;
-        options.checkControlStructures = true;
-        options.checkDuplicateMessages = true;
-        options.checkEs5Strict = true;
-        options.checkFunctions = CheckLevel.ERROR;
-        options.checkGlobalNamesLevel = CheckLevel.ERROR;
-        options.checkGlobalThisLevel = CheckLevel.ERROR;
-        options.checkMethods = CheckLevel.ERROR;
-        options.checkMissingGetCssNameBlacklist = null;
-        options.checkMissingGetCssNameLevel = CheckLevel.OFF;
-        options.checkMissingReturn = CheckLevel.ERROR;
-        options.checkProvides = CheckLevel.OFF;
-        options.checkRequires = CheckLevel.OFF;
-        options.checkShadowVars = CheckLevel.WARNING;
-        options.checkSuspiciousCode = false;
-        options.checkSymbols = true;
-        options.checkTypedPropertyCalls = true;
-        options.checkTypes = true;
-        options.checkUnreachableCode = CheckLevel.WARNING;
-        options.closurePass = false;
-        options.coalesceVariableNames = false;
-        options.collapseAnonymousFunctions = false;
-        options.collapseProperties = false;
-        options.collapseObjectLiterals = false;
-        options.collapseVariableDeclarations = true;
-        options.computeFunctionSideEffects = true;
-        options.convertToDottedProperties = true;
-        options.crossModuleCodeMotion = false;
-        options.crossModuleMethodMotion = false;
-        options.cssRenamingMap = null;
-        options.customPasses = null;
+        // Enable warning for unreachable code.
+        options.setCheckUnreachableCode(CheckLevel.WARNING);
+        
+        // Enable side effect computations
+        options.setComputeFunctionSideEffects(true);
 
-        options.deadAssignmentElimination = true;
-        options.debugFunctionSideEffectsPath = null;
-        options.decomposeExpressions = false;
-        options.devirtualizePrototypeMethods = false;
-        options.disambiguateProperties = false;
-        options.disableRuntimeTypeCheck();
+        // Group multiple variable declarations into one
+        options.setGroupVariableDeclarations(true);
 
-        options.errorFormat = ErrorFormat.SINGLELINE;
-        options.exportTestFunctions = false;
-        options.extractPrototypeMemberDeclarations = false;
-        options.enableExternExports(false);
+        // Line break the output a bit more aggressively
+        options.setLineBreak(true);
+        
+        // Insert line breaks every 80 characters
+        options.setLineLengthThreshold(80);
 
-        options.flowSensitiveInlineVariables = false;
-        options.foldConstants = true;
+        // Set the encoding
+        options.setOutputCharset(this.getEncoding());
 
-        options.gatherCssNames = false;
-        options.generateExports = false;
-        options.generatePseudoNames = false;
-        options.groupVariableDeclarations = true;
-
-        options.ideMode = true;
-        options.ignoreCajaProperties = false;
-        options.inferTypesInGlobalScope = true;
-        options.inlineAnonymousFunctionExpressions = false;
-        options.inlineConstantVars = false;
-        options.inlineFunctions = false;
-        options.inlineGetters = false;
-        options.inlineLocalVariables = false;
-        options.inlineLocalFunctions = false;
-        options.inlineVariables = false;
-        options.inputDelimiter = "// Input %num%";
-        options.inputPropertyMapSerialized = null;
-        options.inputVariableMapSerialized = null;
-        options.instrumentationTemplate = null;
-        options.instrumentForCoverage = false;
-        options.instrumentForCoverageOnly = false;
-
-        options.labelRenaming = false;
-        options.lineBreak = true;
-        options.locale = "UTF-8";
-        options.lineLengthThreshold(500);
-
-        options.markAsCompiled = false;
-        options.markNoSideEffectCalls = false;
-        options.messageBundle = null;
-        options.moveFunctionDeclarations = false;
-
-        options.nameReferenceGraphPath = null;
-        options.nameReferenceReportPath = null;
-
-        options.optimizeArgumentsArray = true;
-        options.optimizeCalls = false;
-        options.optimizeParameters = false;
-        options.optimizeReturns = false;
-
-        options.prettyPrint = false;
-        options.printInputDelimiter = false;
-        options.propertyRenaming = PropertyRenamingPolicy.OFF;
-
-        options.recordFunctionInformation = false;
-        options.removeDeadCode = false;
-        options.removeEmptyFunctions = false;
-        options.removeTryCatchFinally = false;
-        options.removeUnusedLocalVars = false;
-        options.removeUnusedPrototypeProperties = false;
-        options.removeUnusedPrototypePropertiesInExterns = false;
-        options.removeUnusedVars = false;
-        options.renamePrefix = null;
-        options.reportMissingOverride = CheckLevel.OFF; // Generates error messages outside of the compiled code for some reason.
-        options.reportPath = null;
-        options.reportUnknownTypes = CheckLevel.ERROR;
-        options.reserveRawExports = false;
-        options.rewriteFunctionExpressions = false;
-
-        options.smartNameRemoval = false;
-        options.sourceMapDetailLevel = SourceMap.DetailLevel.SYMBOLS;
-        options.sourceMapFormat = SourceMap.Format.DEFAULT;
-        options.sourceMapOutputPath = null;
-        options.specializeInitialModule = false;
-        options.strictMessageReplacement = false;
-        options.stripNamePrefixes = Collections.emptySet();
-        options.stripNameSuffixes = Collections.emptySet();
-        options.stripTypePrefixes = Collections.emptySet();
-        options.stripTypes = Collections.emptySet();
-        options.syntheticBlockEndMarker = null;
-        options.syntheticBlockStartMarker = null;
-
-        options.setAcceptConstKeyword(false);
+        // Chain calls to functions that return this.
         options.setChainCalls(true);
-        options.setCodingConvention(new ClosureCodingConvention());
-        options.setCollapsePropertiesOnExternTypes(false);
-        options.setColorizeErrorOutput(true);
+
+        // Provide some additional annotations for which no warning should
+        // be reported
         final Set<String> extraAnnotationNames = new HashSet<String>();
         extraAnnotationNames.add("require");
         extraAnnotationNames.add("use");
         extraAnnotationNames.add("provide");
         options.setExtraAnnotationNames(extraAnnotationNames);
-        options.setLooseTypes(false);
-        options.setManageClosureDependencies(false);
-        options.setNameAnonymousFunctionsOnly(false);
-        options.setOutputCharset("UTF-8");
-        options.setProcessObjectPropertyString(false);
-        options.setRemoveAbstractMethods(true);
-        options.setRemoveClosureAsserts(true);
-        options.setRewriteNewDateGoogNow(false);
-        options.setSummaryDetailLevel(3);
-        options.setTweakProcessing(TweakProcessing.OFF);
+ 
+        // Set warning levels. Some of this stuff is already explicitly set
+        // by some other option but we override all warning settings here to
+        // have a central place to configure them. Basic rule here is: 
+        // EVERYTHING is at error level. Exceptions: CHECK_USELESS_CODE is
+        // warning because during development it's quite handy to disable
+        // some code with a return statement in the first line for example.
+        // EXTERNS_VALIDATION is OFF because we assume that dependencies are
+        // already validated. DEPRECATED is warning because otherwise we
+        // immediately break other projects when we declare something
+        // deprecated.
         options.setWarningLevel(DiagnosticGroups.ACCESS_CONTROLS,
             CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.AMBIGUOUS_FUNCTION_DECL,
             CheckLevel.ERROR);
-        options
-            .setWarningLevel(DiagnosticGroups.CHECK_REGEXP, CheckLevel.ERROR);
-
-        options.setWarningLevel(DiagnosticGroups.CHECK_TYPES, CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.CHECK_PROVIDES, 
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.CHECK_REGEXP, 
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.CHECK_TYPES, 
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.CHECK_USELESS_CODE,
             CheckLevel.WARNING);
         options.setWarningLevel(DiagnosticGroups.CHECK_VARIABLES,
             CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.CONST,
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.CONSTANT_PROPERTY,
             CheckLevel.ERROR);
-        options
-            .setWarningLevel(DiagnosticGroups.DEPRECATED, CheckLevel.WARNING);
+        options.setWarningLevel(DiagnosticGroups.DEBUGGER_STATEMENT_PRESENT,
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.DEPRECATED,
+            CheckLevel.WARNING);
+        options.setWarningLevel(DiagnosticGroups.DUPLICATE_MESSAGE,
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.DUPLICATE_VARS,
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.ES5_STRICT,
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.EXTERNS_VALIDATION,
             CheckLevel.OFF);
         options.setWarningLevel(DiagnosticGroups.FILEOVERVIEW_JSDOC,
-            CheckLevel.WARNING);
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.GLOBAL_THIS,
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.INTERNET_EXPLORER_CHECKS,
-            CheckLevel.WARNING);
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.INVALID_CASTS,
             CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.MISSING_PROPERTIES,
             CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.NON_STANDARD_JSDOC,
-            CheckLevel.WARNING);
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.STRICT_MODULE_DEP_CHECK,
             CheckLevel.ERROR);
-        options.setWarningLevel(DiagnosticGroups.TWEAKS, CheckLevel.WARNING);
+        options.setWarningLevel(DiagnosticGroups.TWEAKS, 
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.TYPE_INVALIDATION, 
+            CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.UNDEFINED_VARIABLES,
             CheckLevel.ERROR);
         options.setWarningLevel(DiagnosticGroups.UNKNOWN_DEFINES,
-            CheckLevel.WARNING);
-        options.setWarningLevel(DiagnosticGroups.VISIBILITY, CheckLevel.ERROR);
-
-        options.tightenTypes = false;
-        options.tracer = TracerMode.OFF;
-
-        options.unaliasableGlobals = null;
-
-        options.variableRenaming = VariableRenamingPolicy.LOCAL;
-
+            CheckLevel.ERROR);
+        options.setWarningLevel(DiagnosticGroups.VISIBILITY, 
+            CheckLevel.ERROR);
+        
         return options;
     }
 
