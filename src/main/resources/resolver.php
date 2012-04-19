@@ -26,10 +26,10 @@ class Resolver
     private $resolvePath = null;
 
     /** The regular expression for matching require tags */
-    private $REQUIRE_REGEX = "/@require\\s+([a-zA-Z0-9\\/\\.]*)/";
+    private $REQUIRE_REGEX = "/@require\\s+([-_a-zA-Z0-9\\/\\.]*)/";
 
     /** The regular expression for matching use tags */
-    private $USE_REGEX = "/@use\\s+([a-zA-Z0-9\\/\\.]*)/";
+    private $USE_REGEX = "/@use\\s+([-_a-zA-Z0-9\\/\\.]*)/";
 
     /** The mime type mapping */
     private $MIMETYPE_MAP = array(
